@@ -1,0 +1,109 @@
+/* ===== 全域樣式與設計變數 ===== */
+:root {
+  /* 色彩：暖奶油底 + 童趣繪本配色 */
+  --paper: #f6ebcb;
+  --paper-2: #fdf6e3;
+  --ink: #5b3b24;
+  --ink-soft: #8a6a4f;
+  --sun: #f9c51e;
+  --sun-ray: #f7d24b;
+  --shell: #8fc13f;
+  --shell-light: #b7db6e;
+  --limb: #c7b24a;
+  --flame: #e2542f;
+  --flame-2: #ef9f27;
+  --cloud: #ffffff;
+  --success: #3b8c5a;
+  --warning-bg: #fbe7c9;
+  --warning-ink: #9a6a12;
+
+  /* 字級（用 clamp 讓手機/平板/電腦自動縮放） */
+  --fs-title: clamp(1.75rem, 6vw, 3rem);
+  --fs-lead: clamp(1.1rem, 3vw, 1.4rem);
+  --fs-body: clamp(0.95rem, 2.6vw, 1.1rem);
+  --fs-small: clamp(0.8rem, 2.2vw, 0.95rem);
+
+  --radius: 16px;
+  --maxw: 640px;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  /* 支援手機瀏海/安全區域 */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 共用按鈕 */
+.btn {
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: var(--flame);
+  border: none;
+  border-radius: 999px;
+  padding: 0.7em 2em;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.btn:hover {
+  filter: brightness(1.05);
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn--ghost {
+  color: var(--ink);
+  background: transparent;
+  border: 2px solid var(--ink-soft);
+}
+
+/* 平板 / 桌機：放大字級與版面留白 */
+@media (min-width: 768px) {
+  :root {
+    --fs-title: clamp(2.4rem, 5vw, 3.4rem);
+    --fs-lead: clamp(1.3rem, 2.4vw, 1.6rem);
+    --maxw: 720px;
+  }
+}
+
+/* 手機橫向或矮螢幕：允許捲動，避免內容被裁切 */
+@media (max-height: 560px) {
+  #app {
+    align-items: flex-start;
+  }
+}
+
+/* 減少動態偏好：關閉大型動畫 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
