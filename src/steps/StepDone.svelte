@@ -1,14 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { ritual } from '../lib/stores.svelte';
+  import { i18n } from '../lib/i18n.svelte';
   import { renderResultCard } from '../canvas/resultCard';
+
+  const t = $derived(i18n.t.done);
 
   let cardUrl = $state('');
   let cardBlob: Blob | null = null;
   let canShare = $state(false);
 
   onMount(() => {
-    const canvas = renderResultCard(ritual.wish);
+    const canvas = renderResultCard(ritual.wish, i18n.current);
     cardUrl = canvas.toDataURL('image/png');
     canvas.toBlob((b) => (cardBlob = b), 'image/png');
     // 是否支援分享圖片檔
@@ -21,15 +24,15 @@
   function save() {
     const a = document.createElement('a');
     a.href = cardUrl;
-    a.download = '燒烏龜祈晴.png';
+    a.download = `${t.downloadName}.png`;
     a.click();
   }
 
   async function share() {
     if (!cardBlob) return;
-    const file = new File([cardBlob], '燒烏龜祈晴.png', { type: 'image/png' });
+    const file = new File([cardBlob], `${t.downloadName}.png`, { type: 'image/png' });
     try {
-      await navigator.share({ files: [file], text: '誠心祈求好天氣 🌞' });
+      await navigator.share({ files: [file], text: t.shareText });
     } catch {
       // 使用者取消分享，忽略
     }
@@ -41,22 +44,22 @@
 </script>
 
 <section class="done">
-  <h2>好天氣已送出</h2>
-  <p class="sub">紙張已完全燒盡，願望隨煙上達 🐢</p>
+  <h2>{t.title}</h2>
+  <p class="sub">{t.sub}</p>
 
   {#if cardUrl}
-    <img class="card" src={cardUrl} alt="祈晴完成卡片" />
+    <img class="card" src={cardUrl} alt={t.cardAlt} />
   {/if}
 
   <div class="actions">
     {#if canShare}
-      <button class="btn" onclick={share}>分享</button>
-      <button class="btn btn--ghost" onclick={save}>儲存圖片</button>
+      <button class="btn" onclick={share}>{t.share}</button>
+      <button class="btn btn--ghost" onclick={save}>{t.save}</button>
     {:else}
-      <button class="btn" onclick={save}>儲存圖片</button>
+      <button class="btn" onclick={save}>{t.save}</button>
     {/if}
   </div>
-  <button class="again" onclick={again}>再燒一隻 🐢</button>
+  <button class="again" onclick={again}>{t.again}</button>
 </section>
 
 <style>

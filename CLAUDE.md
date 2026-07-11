@@ -37,8 +37,31 @@ value). The three progress dots only represent `form / draw / done`.
 ### The `.svelte.ts` extension is load-bearing
 
 Runes (`$state`, `$derived`) work in a plain `.ts` module **only** if the file is named
-`*.svelte.ts`. That's why the store is `stores.svelte.ts`. Keep that extension for any
-non-component module that uses runes.
+`*.svelte.ts`. That's why the store is `stores.svelte.ts` and the locale store is
+`i18n.svelte.ts`. Keep that extension for any non-component module that uses runes.
+
+### Internationalization (zh-TW / en)
+
+No i18n library — a lightweight rune-based scheme:
+
+- `src/lib/i18n.svelte.ts` exports the `i18n` singleton (`current` = `$state<Locale>`,
+  `t` getter returning the active `Messages`, `set(locale)`). Reading `i18n.t.x` in a
+  template is reactive because the getter reads `current`. Initial locale is detected
+  from `localStorage` then `navigator.language`; `set()` persists it and updates
+  `document.documentElement.lang`.
+- `src/lib/messages.ts` holds the `Messages` interface + `zh-TW` / `en` dictionaries.
+  Both locales share one `Messages` type, so a missing key fails `svelte-check`. Add new
+  UI strings here, never inline in components. Interpolated strings are functions
+  (e.g. `addSticker: (emoji) => …`).
+- **Pure modules take `locale` as a parameter**, they do not import the singleton:
+  `validateWish`/`checkWish` (validation.ts), `formatDateRange` (format.ts),
+  `renderResultCard` (resultCard.ts), `exportPaper` (exportPaper.ts). Components pass
+  `i18n.current`; inside a `$derived` this makes them re-run on language change.
+- **The wish taboo is localized in `validation.ts`**, not messages.ts, because it is
+  logic + copy together. `zh-TW` blocks `雨` + negative words; `en` uses a
+  word-boundary regex so `rain` is blocked but `rainbow` passes.
+- The language switcher lives in `Footer.svelte`. `App.svelte` has an `$effect` that
+  syncs `document.title` and `<html lang>` to the active locale.
 
 ### Two layers: Svelte UI vs. framework-agnostic canvas
 
@@ -93,7 +116,8 @@ silently no-op'ing in private mode. `ritual` seeds `wish` from it on init and on
 
 ## Conventions
 
-- Code comments and UI copy are in **Traditional Chinese**; match that when editing.
+- Code comments are in **Traditional Chinese**; match that when editing. UI copy is
+  bilingual via `messages.ts` (add both `zh-TW` and `en`).
 - `vite.config.ts` sets `base: './'` (relative paths) so the build works on both a
   GitHub Pages project subpath and a custom domain — do not change to an absolute base.
 - `PLAN.md` is the original milestone plan (historical context, may be stale vs. code).

@@ -1,8 +1,15 @@
 import type { WishData } from '../lib/types';
+import type { Locale } from '../lib/i18n.svelte';
 import { formatDateRange } from '../lib/format';
 
+// 完成卡片上的在地化文字
+const CARD_TEXT: Record<Locale, { title: string; footer: string }> = {
+  'zh-TW': { title: '好天氣已送出', footer: '線上燒烏龜 · 誠心祈晴' },
+  en: { title: 'Good weather is on its way', footer: 'Burn Turtles for Good Weather' },
+};
+
 // 產生可儲存 / 分享的結果圖（祈晴完成卡片）
-export function renderResultCard(wish: WishData): HTMLCanvasElement {
+export function renderResultCard(wish: WishData, locale: Locale): HTMLCanvasElement {
   const W = 640;
   const H = 800;
   const canvas = document.createElement('canvas');
@@ -22,7 +29,20 @@ export function renderResultCard(wish: WishData): HTMLCanvasElement {
   g.textAlign = 'center';
   g.textBaseline = 'middle';
   const emojiFont = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-  const textFont = "'PingFang TC','Microsoft JhengHei',sans-serif";
+  const textFont = "'PingFang TC','Microsoft JhengHei','Segoe UI',sans-serif";
+  const t = CARD_TEXT[locale];
+
+  // 置中畫一行文字，字級過寬時自動縮小以塞進卡片（英文較長時特別需要）
+  const maxW = W - 120;
+  function line(text: string, weight: number, size: number, y: number) {
+    let px = size;
+    do {
+      g.font = `${weight} ${px}px ${textFont}`;
+      if (g.measureText(text).width <= maxW || px <= 20) break;
+      px -= 2;
+    } while (true);
+    g.fillText(text, W / 2, y);
+  }
 
   // 太陽
   g.font = `160px ${emojiFont}`;
@@ -30,21 +50,19 @@ export function renderResultCard(wish: WishData): HTMLCanvasElement {
 
   // 主標
   g.fillStyle = '#5b3b24';
-  g.font = `700 52px ${textFont}`;
-  g.fillText('好天氣已送出', W / 2, 400);
+  line(t.title, 700, 52, 400);
 
   // 日期 · 活動
   g.fillStyle = '#8a6a4f';
-  g.font = `400 34px ${textFont}`;
   const info = wish.place
-    ? `${formatDateRange(wish)} · ${wish.eventName} · ${wish.place}`
-    : `${formatDateRange(wish)} · ${wish.eventName}`;
-  g.fillText(info, W / 2, 470);
+    ? `${formatDateRange(wish, locale)} · ${wish.eventName} · ${wish.place}`
+    : `${formatDateRange(wish, locale)} · ${wish.eventName}`;
+  line(info, 400, 34, 470);
 
   // 祈願詞
   g.fillStyle = '#c0492a';
-  g.font = `700 46px ${textFont}`;
-  g.fillText(`「${wish.wish}」`, W / 2, 545);
+  const quoted = locale === 'en' ? `“${wish.wish}”` : `「${wish.wish}」`;
+  line(quoted, 700, 46, 545);
 
   // 一排小烏龜朝太陽
   g.font = `44px ${emojiFont}`;
@@ -60,8 +78,7 @@ export function renderResultCard(wish: WishData): HTMLCanvasElement {
 
   // 頁尾
   g.fillStyle = '#a88c68';
-  g.font = `400 26px ${textFont}`;
-  g.fillText('線上燒烏龜 · 誠心祈晴', W / 2, H - 70);
+  line(t.footer, 400, 26, H - 70);
 
   return canvas;
 }

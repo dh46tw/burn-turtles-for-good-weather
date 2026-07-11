@@ -1,6 +1,9 @@
 <script lang="ts">
   import { ritual } from '../lib/stores.svelte';
+  import { i18n } from '../lib/i18n.svelte';
   import { formatDateRange } from '../lib/format';
+
+  const t = $derived(i18n.t.pray);
 
   function back() {
     ritual.goTo('draw');
@@ -12,20 +15,22 @@
 
 <section class="pray">
   <div class="flame-icon" aria-hidden="true">🔥</div>
-  <h2>雙手合十，閉上眼睛</h2>
-  <p class="hint">誠心默念以下的日期與祈願</p>
+  <h2>{t.title}</h2>
+  <p class="hint">{t.hint}</p>
 
   <div class="chant">
-    <p class="line">{formatDateRange(ritual.wish)} · {ritual.wish.eventName}</p>
-    {#if ritual.wish.place}<p class="line">於 {ritual.wish.place}</p>{/if}
-    <p class="wish">「{ritual.wish.wish}」</p>
+    <p class="line">{formatDateRange(ritual.wish, i18n.current)} · {ritual.wish.eventName}</p>
+    {#if ritual.wish.place}<p class="line">{t.at(ritual.wish.place)}</p>{/if}
+    <p class="wish">
+      {i18n.current === 'en' ? `“${ritual.wish.wish}”` : `「${ritual.wish.wish}」`}
+    </p>
   </div>
 
-  <p class="taboo">🙏 儀式進行中請保持雙手乾燥，誠心默念後點火</p>
+  <p class="taboo">{t.taboo}</p>
 
   <div class="actions">
-    <button class="ghost" onclick={back}>再想想</button>
-    <button class="btn" onclick={ignite}>點火</button>
+    <button class="ghost" onclick={back}>{t.reconsider}</button>
+    <button class="btn" onclick={ignite}>{t.ignite}</button>
   </div>
 </section>
 

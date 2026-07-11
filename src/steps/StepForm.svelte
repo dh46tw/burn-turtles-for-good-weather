@@ -1,16 +1,19 @@
 <script lang="ts">
   import { ritual } from '../lib/stores.svelte';
+  import { i18n } from '../lib/i18n.svelte';
   import { validateWish, checkWish } from '../lib/validation';
   import { saveLastWish, emptyWish } from '../lib/storage';
+
+  const t = $derived(i18n.t.form);
 
   // 是否已嘗試送出（送出後才顯示必填錯誤，避免一進來就紅通通）
   let submitted = $state(false);
 
   // 即時計算各欄位錯誤
-  const errors = $derived(validateWish(ritual.wish));
+  const errors = $derived(validateWish(ritual.wish, i18n.current));
 
   // 祈願詞邊打邊驗（讓使用者立刻知道踩到「雨」等禁字）
-  const wishError = $derived(checkWish(ritual.wish.wish));
+  const wishError = $derived(checkWish(ritual.wish.wish, i18n.current));
 
   function next() {
     submitted = true;
@@ -29,16 +32,19 @@
 
 <section class="form">
   <header class="head">
-    <h1>一起來燒烏龜</h1>
-    <p class="lead">誠心祈求好天氣 · 電子祈晴儀式</p>
+    <h1>{t.title}</h1>
+    <p class="lead">{t.lead}</p>
+    {#if t.about}
+      <p class="about">{t.about}</p>
+    {/if}
   </header>
 
   <div class="fields">
     <label class="field">
-      <span class="label">活動名稱</span>
+      <span class="label">{t.eventName}</span>
       <input
         type="text"
-        placeholder="例：畢業典禮、演唱會、露營"
+        placeholder={t.eventNamePlaceholder}
         bind:value={ritual.wish.eventName}
         class:err={submitted && errors.eventName}
       />
@@ -49,7 +55,7 @@
 
     <div class="row">
       <label class="field">
-        <span class="label">開始日期</span>
+        <span class="label">{t.startDate}</span>
         <input
           type="date"
           bind:value={ritual.wish.startDate}
@@ -60,7 +66,7 @@
         {/if}
       </label>
       <label class="field">
-        <span class="label">結束日期 <em>（單日免填）</em></span>
+        <span class="label">{t.endDate} <em>{t.endDateHint}</em></span>
         <input
           type="date"
           min={ritual.wish.startDate || undefined}
@@ -74,10 +80,10 @@
     </div>
 
     <label class="field">
-      <span class="label">地點</span>
+      <span class="label">{t.place}</span>
       <input
         type="text"
-        placeholder="例：墾丁、台北小巨蛋"
+        placeholder={t.placePlaceholder}
         bind:value={ritual.wish.place}
         class:err={submitted && errors.place}
       />
@@ -87,16 +93,16 @@
     </label>
 
     <label class="field">
-      <span class="label">祈願詞 <em>（只能用肯定句）</em></span>
+      <span class="label">{t.wish} <em>{t.wishHint}</em></span>
       <input
         type="text"
-        placeholder="例：陽光普照、萬里無雲、大晴天"
+        placeholder={t.wishPlaceholder}
         bind:value={ritual.wish.wish}
         class:err={(submitted && !ritual.wish.wish.trim()) ||
           (!!wishError && ritual.wish.wish.length > 0)}
       />
       {#if submitted && !ritual.wish.wish.trim()}
-        <span class="msg">請寫下你的祈願</span>
+        <span class="msg">{errors.wish}</span>
       {:else if wishError && ritual.wish.wish.length > 0}
         <span class="msg warn">⚠ {wishError}</span>
       {/if}
@@ -104,13 +110,13 @@
   </div>
 
   <div class="taboo">
-    <span class="taboo-title">儀式小提醒</span>
-    <span>全程保持雙手乾燥（水象徵雨氣）· 祈願只用肯定句 · 紙張需完全燒盡</span>
+    <span class="taboo-title">{t.tabooTitle}</span>
+    <span>{t.tabooBody}</span>
   </div>
 
   <div class="actions">
-    <button class="btn btn--ghost" onclick={clearForm}>清空</button>
-    <button class="btn" onclick={next}>開始祈願</button>
+    <button class="btn btn--ghost" onclick={clearForm}>{t.clear}</button>
+    <button class="btn" onclick={next}>{t.start}</button>
   </div>
 </section>
 
@@ -135,6 +141,14 @@
     font-size: var(--fs-body);
     margin: 0.25rem 0 0;
     color: var(--ink-soft);
+  }
+  .about {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    margin: 0.6rem auto 0;
+    max-width: 34em;
+    color: var(--ink-soft);
+    opacity: 0.85;
   }
   .fields {
     display: flex;

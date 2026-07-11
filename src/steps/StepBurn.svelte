@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import { ritual } from '../lib/stores.svelte';
+  import { i18n } from '../lib/i18n.svelte';
   import { FireEngine } from '../canvas/FireEngine';
 
   let canvasEl: HTMLCanvasElement;
@@ -31,7 +32,7 @@
 
 <section class="burn">
   <canvas bind:this={canvasEl} class="fire"></canvas>
-  <p class="cap">焚燒中…紙張化為灰燼，好天氣冉冉上升</p>
+  <p class="cap">{i18n.t.burn.caption}</p>
 </section>
 
 <style>

@@ -1,4 +1,5 @@
 import type { WishData } from '../lib/types';
+import type { Locale } from '../lib/i18n.svelte';
 import { formatDateRange } from '../lib/format';
 import { TURTLE_EMOJI, type Sticker } from './stickers';
 
@@ -13,14 +14,15 @@ interface ExportOptions {
   height: number; // 紙張顯示高（CSS px）
   wish: WishData;
   stickers: Sticker[];
+  locale: Locale;
 }
 
 const EMOJI_FONT =
   '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
-const TEXT_FONT = "'PingFang TC','Microsoft JhengHei',sans-serif";
+const TEXT_FONT = "'PingFang TC','Microsoft JhengHei','Segoe UI',sans-serif";
 
 // 將整張紙（奶油底色 + 貼紙 + 祈願文字）合成為 PNG DataURL，供焚燒步驟使用
-export function exportPaper({ width, height, wish, stickers }: ExportOptions): string {
+export function exportPaper({ width, height, wish, stickers, locale }: ExportOptions): string {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(width * dpr);
@@ -56,7 +58,7 @@ export function exportPaper({ width, height, wish, stickers }: ExportOptions): s
   const lineGap = width * 0.075;
   g.fillStyle = '#5b3b24';
   g.font = `700 ${width * 0.058}px ${TEXT_FONT}`;
-  g.fillText(formatDateRange(wish), cx, y);
+  g.fillText(formatDateRange(wish, locale), cx, y);
 
   y += lineGap;
   g.font = `500 ${width * 0.05}px ${TEXT_FONT}`;
@@ -66,7 +68,8 @@ export function exportPaper({ width, height, wish, stickers }: ExportOptions): s
   y += lineGap;
   g.fillStyle = '#c0492a';
   g.font = `700 ${width * 0.06}px ${TEXT_FONT}`;
-  g.fillText(`「${wish.wish}」`, cx, y);
+  const quoted = locale === 'en' ? `“${wish.wish}”` : `「${wish.wish}」`;
+  g.fillText(quoted, cx, y);
 
   return canvas.toDataURL('image/png');
 }

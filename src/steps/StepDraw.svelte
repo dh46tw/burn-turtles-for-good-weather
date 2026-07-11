@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import { ritual } from '../lib/stores.svelte';
+  import { i18n } from '../lib/i18n.svelte';
   import { formatDateRange } from '../lib/format';
   import { exportPaper } from '../canvas/exportPaper';
   import {
@@ -15,6 +16,8 @@
     arrangeTurtles,
     type Sticker,
   } from '../canvas/stickers';
+
+  const t = $derived(i18n.t.draw);
 
   let paperEl: HTMLDivElement;
   let seq = 0;
@@ -104,21 +107,22 @@
       height: r.height,
       wish: ritual.wish,
       stickers: [...turtles, SUN, ...free], // 烏龜最下、太陽、雲在最上（雲擋太陽）
+      locale: i18n.current,
     });
     ritual.goTo('pray');
   }
 </script>
 
 <section class="draw">
-  <h2>擺放太陽與烏龜</h2>
-  <p class="hint">太陽在上、烏龜朝著太陽 · 可拖曳微調或加點貼紙</p>
+  <h2>{t.title}</h2>
+  <p class="hint">{t.hint}</p>
 
   <div
     class="paper"
     bind:this={paperEl}
     onpointerdown={deselect}
     role="application"
-    aria-label="祈願紙張"
+    aria-label={t.paperAria}
   >
     {#each turtles as s (s.id)}
       <span
@@ -160,36 +164,38 @@
     {/each}
 
     <div class="paper-text">
-      <p class="t-date">{formatDateRange(ritual.wish)} · {ritual.wish.eventName}</p>
-      <p class="t-wish">「{ritual.wish.wish}」</p>
+      <p class="t-date">{formatDateRange(ritual.wish, i18n.current)} · {ritual.wish.eventName}</p>
+      <p class="t-wish">
+        {i18n.current === 'en' ? `“${ritual.wish.wish}”` : `「${ritual.wish.wish}」`}
+      </p>
     </div>
   </div>
 
-  <div class="turtle-count" role="group" aria-label="烏龜數量">
-    <span class="tc-label">🐢 隻數</span>
-    <button class="tool" onclick={() => setTurtles(turtleCount - 1)} aria-label="減少">－</button>
+  <div class="turtle-count" role="group" aria-label={t.turtleGroupAria}>
+    <span class="tc-label">{t.turtleCountLabel}</span>
+    <button class="tool" onclick={() => setTurtles(turtleCount - 1)} aria-label={t.decrease}>－</button>
     <span class="tc-num">{turtleCount}</span>
-    <button class="tool" onclick={() => setTurtles(turtleCount + 1)} aria-label="增加">＋</button>
+    <button class="tool" onclick={() => setTurtles(turtleCount + 1)} aria-label={t.increase}>＋</button>
   </div>
 
-  <div class="palette" role="group" aria-label="貼紙">
+  <div class="palette" role="group" aria-label={t.paletteAria}>
     {#each STICKER_PALETTE as emoji}
-      <button class="chip" onclick={() => add(emoji)} aria-label={`新增 ${emoji}`}>{emoji}</button>
+      <button class="chip" onclick={() => add(emoji)} aria-label={t.addSticker(emoji)}>{emoji}</button>
     {/each}
   </div>
 
   {#if selectedFree}
     <div class="edit" in:fade={{ duration: 150 }}>
-      <button class="tool" onclick={() => resize(-SIZE_STEP)} aria-label="縮小">－</button>
-      <span class="edit-label">{selectedFree.emoji} 大小</span>
-      <button class="tool" onclick={() => resize(SIZE_STEP)} aria-label="放大">＋</button>
-      <button class="tool danger" onclick={removeSelected}>刪除</button>
+      <button class="tool" onclick={() => resize(-SIZE_STEP)} aria-label={t.shrink}>－</button>
+      <span class="edit-label">{t.sizeLabel(selectedFree.emoji)}</span>
+      <button class="tool" onclick={() => resize(SIZE_STEP)} aria-label={t.enlarge}>＋</button>
+      <button class="tool danger" onclick={removeSelected}>{t.remove}</button>
     </div>
   {/if}
 
   <div class="actions">
-    <button class="btn btn--ghost" onclick={back}>上一步</button>
-    <button class="btn" onclick={next}>擺好了</button>
+    <button class="btn btn--ghost" onclick={back}>{t.back}</button>
+    <button class="btn" onclick={next}>{t.next}</button>
   </div>
 </section>
 

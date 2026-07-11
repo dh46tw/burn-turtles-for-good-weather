@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import { ritual } from './lib/stores.svelte';
+  import { i18n } from './lib/i18n.svelte';
   import Footer from './lib/Footer.svelte';
   import StepForm from './steps/StepForm.svelte';
   import StepDraw from './steps/StepDraw.svelte';
@@ -21,12 +22,18 @@
   // 默念、焚燒屬沉浸畫面（暗底、不顯示步驟條與 footer）
   const immersive = $derived(ritual.step === 'pray' || ritual.step === 'burn');
 
-  // 進度指示
-  const dots: Array<{ key: 'form' | 'draw' | 'done'; label: string }> = [
-    { key: 'form', label: '祈願' },
-    { key: 'draw', label: '繪製' },
-    { key: 'done', label: '完成' },
-  ];
+  // 進度指示（label 依語言切換）
+  const dots = $derived<Array<{ key: 'form' | 'draw' | 'done'; label: string }>>([
+    { key: 'form', label: i18n.t.steps.form },
+    { key: 'draw', label: i18n.t.steps.draw },
+    { key: 'done', label: i18n.t.steps.done },
+  ]);
+
+  // 分頁標題與 <html lang> 隨語言更新（也涵蓋初始偵測到的語言）
+  $effect(() => {
+    document.title = i18n.t.app.title;
+    document.documentElement.lang = i18n.current === 'en' ? 'en' : 'zh-Hant';
+  });
 </script>
 
 <main class="stage" class:immersive>
