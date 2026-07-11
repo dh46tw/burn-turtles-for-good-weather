@@ -29,6 +29,12 @@
   發紅、火焰竄升、灰燼飄散。
 - **可分享結果卡** — 儲存或分享祈晴完成圖。
 - **表單記憶** — 以 `localStorage` 記住上次填寫內容。
+- **中英雙語（中文 / English）** — 不依賴任何 i18n 套件，採輕量的 runes 方案。語言切換
+  器位於頁尾；初次語系會依 `localStorage`、再依瀏覽器語言自動偵測。連祈願禁忌都在地化——
+  `zh-TW` 擋「雨」字，`en` 擋單字 "rain" 但放行 "rainbow"。
+- **可安裝 PWA** — 可加入主畫面、離線也能開啟。以
+  [`vite-plugin-pwa`](https://vite-pwa-org.netlify.app/) 建置：service worker 自動更新並
+  預先快取建置產物，app icon 由單一張 ☀️🐢 emoji 圖自動產生各尺寸。
 - **響應式版面** — 支援手機、平板、電腦。
 
 ## 技術棧
@@ -37,6 +43,7 @@
 - [Svelte](https://svelte.dev/) 5（runes）
 - TypeScript
 - HTML Canvas 2D（紙張合成 + 焚燒引擎），無後端
+- [vite-plugin-pwa](https://vite-pwa-org.netlify.app/)（可安裝 + 離線 PWA）
 
 ## 本地開發
 
@@ -66,10 +73,12 @@ src/
 ├─ lib/
 │  ├─ types.ts           # Step / WishData 型別
 │  ├─ stores.svelte.ts   # 全域儀式狀態（runes）
-│  ├─ validation.ts      # 祈願詞驗證（只收肯定句）
+│  ├─ validation.ts      # 祈願詞驗證（只收肯定句，禁忌在地化）
 │  ├─ format.ts          # 日期區間格式化
 │  ├─ storage.ts         # localStorage 表單記憶
-│  └─ Footer.svelte
+│  ├─ i18n.svelte.ts     # 語系 store（runes）+ 偵測 / 持久化
+│  ├─ messages.ts        # zh-TW / en UI 字典（共用一個 Messages 型別）
+│  └─ Footer.svelte      # 頁尾 + 語言切換器
 ├─ steps/                # 每個步驟一個元件
 │  ├─ StepForm / StepDraw / StepPray / StepBurn / StepDone.svelte
 └─ canvas/               # 與框架解耦的純 TS

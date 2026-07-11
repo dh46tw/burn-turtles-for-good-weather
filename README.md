@@ -37,6 +37,13 @@ This project is a digital, eco-friendly version of that ritual.
   rising flames and drifting ash.
 - **Shareable result card** — save or share a completion image.
 - **Form memory** — remembers your last entry via `localStorage`.
+- **Bilingual (中文 / English)** — a lightweight, rune-based i18n scheme with no library.
+  The language switcher lives in the footer; the initial locale is detected from
+  `localStorage` then the browser language. Even the wish taboo is localized — `zh-TW`
+  blocks 雨 (*rain*), while `en` blocks the word "rain" but lets "rainbow" through.
+- **Installable PWA** — installable to the home screen and openable offline. Built with
+  [`vite-plugin-pwa`](https://vite-pwa-org.netlify.app/): an auto-updating service worker
+  precaches the build, and the app icons are generated from a single ☀️🐢 emoji image.
 - **Responsive** — works on phone, tablet and desktop.
 
 ## Tech stack
@@ -45,6 +52,7 @@ This project is a digital, eco-friendly version of that ritual.
 - [Svelte](https://svelte.dev/) 5 (runes)
 - TypeScript
 - HTML Canvas 2D (drawing composition + fire engine), no backend
+- [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (installable + offline PWA)
 
 ## Getting started
 
@@ -74,10 +82,12 @@ src/
 ├─ lib/
 │  ├─ types.ts           # Step / WishData types
 │  ├─ stores.svelte.ts   # global ritual state (runes)
-│  ├─ validation.ts      # wish validation (positive-only)
+│  ├─ validation.ts      # wish validation (positive-only, localized taboo)
 │  ├─ format.ts          # date-range formatting
 │  ├─ storage.ts         # localStorage form memory
-│  └─ Footer.svelte
+│  ├─ i18n.svelte.ts     # locale store (runes) + detection/persistence
+│  ├─ messages.ts        # zh-TW / en UI dictionaries (one Messages type)
+│  └─ Footer.svelte      # footer + language switcher
 ├─ steps/                # one component per step
 │  ├─ StepForm / StepDraw / StepPray / StepBurn / StepDone.svelte
 └─ canvas/               # framework-agnostic pure TS
