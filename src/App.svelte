@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import { ritual } from './lib/stores.svelte';
+  import Footer from './lib/Footer.svelte';
   import StepForm from './steps/StepForm.svelte';
   import StepDraw from './steps/StepDraw.svelte';
   import StepPray from './steps/StepPray.svelte';
@@ -17,7 +18,10 @@
   };
   const CurrentView = $derived(views[ritual.step]);
 
-  // 進度指示用（默念、焚燒屬沉浸畫面，不顯示步驟條）
+  // 默念、焚燒屬沉浸畫面（暗底、不顯示步驟條與 footer）
+  const immersive = $derived(ritual.step === 'pray' || ritual.step === 'burn');
+
+  // 進度指示
   const dots: Array<{ key: 'form' | 'draw' | 'done'; label: string }> = [
     { key: 'form', label: '祈願' },
     { key: 'draw', label: '繪製' },
@@ -25,19 +29,25 @@
   ];
 </script>
 
-<main class="stage" class:immersive={ritual.step === 'pray' || ritual.step === 'burn'}>
-  {#key ritual.step}
-    <div class="view" in:fade={{ duration: 400 }}>
-      <CurrentView />
-    </div>
-  {/key}
+<main class="stage" class:immersive>
+  <div class="content">
+    {#key ritual.step}
+      <div class="view" in:fade={{ duration: 400 }}>
+        <CurrentView />
+      </div>
+    {/key}
 
-  {#if ritual.step === 'form' || ritual.step === 'draw' || ritual.step === 'done'}
-    <nav class="steps" aria-label="流程進度">
-      {#each dots as d}
-        <span class="dot" class:active={ritual.step === d.key}>{d.label}</span>
-      {/each}
-    </nav>
+    {#if !immersive}
+      <nav class="steps" aria-label="流程進度">
+        {#each dots as d}
+          <span class="dot" class:active={ritual.step === d.key}>{d.label}</span>
+        {/each}
+      </nav>
+    {/if}
+  </div>
+
+  {#if !immersive}
+    <Footer />
   {/if}
 </main>
 
@@ -46,17 +56,26 @@
     width: 100%;
     max-width: var(--maxw);
     min-height: 100dvh;
-    padding: 1.5rem 1.25rem 2.5rem;
+    padding: 1.5rem 1.25rem 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
     transition: background 0.5s ease;
   }
   .stage.immersive {
     max-width: none;
     background: #1a1410;
+    justify-content: center;
+  }
+  /* 內容佔滿剩餘高度並垂直置中，footer 自然落在底部 */
+  .content {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
   }
   .view {
     width: 100%;

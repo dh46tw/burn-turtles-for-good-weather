@@ -180,6 +180,12 @@ burn-turtles-for-good-weather/
 - `StepForm.svelte`：送出驗證通過時 `saveLastWish()`。
 - 驗證：`svelte-check` 零錯誤、build 成功；存取邏輯測過（空值 / 往返 / 壞 JSON / 缺欄位）。
 
+## 10. Footer 與授權
+
+- `LICENSE`：MIT 授權（版權人 dh46tw、2026）。
+- `lib/Footer.svelte`：底部資訊列——`© 2026 dh46tw · GitHub · MIT License`（分別連到個人頁 / repo / LICENSE，皆開新分頁 + `rel="noopener noreferrer"`），第二行 `Built with Claude`。
+- `App.svelte`：內容包一層 `.content`（flex:1 垂直置中），footer 固定落在底部；僅非沉浸畫面（form / draw / done）顯示，默念 / 焚燒不顯示。
+
 ### 本地執行方式
 
 ```bash
