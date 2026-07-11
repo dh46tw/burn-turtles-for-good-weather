@@ -108,7 +108,7 @@ burn-turtles-for-good-weather/
 | **M3 繪製（emoji 貼紙）** | 從調色盤點選 emoji 加到紙上、拖曳移動、縮放、刪除；把紙張(底色+貼紙+文字)合成為 PNG 供焚燒 | ✅ 完成 |
 | **M4 焚燒引擎** | FireEngine 粒子火焰：紙張由下往上碳化捲曲、火焰竄動、完全燒成灰燼飄散（重頭戲） | ✅ 完成 |
 | **M5 收尾與 RWD** | 默念引導頁、完成頁（截圖分享）、手機 / 平板 / 電腦三尺寸調校、禁忌提示文案 | ✅ 完成 |
-| **M6 部署上線** | 接 GitHub Actions 發佈到 GitHub Pages、設定 Vite `base`、跨裝置實測 | ⬜ 待辦 |
+| **M6 部署上線** | 接 GitHub Actions 發佈到 GitHub Pages、設定 Vite `base`、跨裝置實測 | ✅ 完成 |
 
 ---
 
@@ -160,6 +160,18 @@ burn-turtles-for-good-weather/
 - RWD：`app.css` 加平板 / 桌機斷點（≥768px 放大字級與 `--maxw`）、矮螢幕改頂端對齊可捲動；紙張、焚燒畫布、結果卡在寬螢幕放大。
 - 繪製步驟本身以比例（fraction）與 `cqw` 定位，已天然支援不同尺寸與縮放。
 - 驗證：`svelte-check` 零錯誤、`vite build` 成功。
+
+## 8f. M6 已完成內容
+
+- `.github/workflows/deploy.yml`：push 到 main（或手動 `workflow_dispatch`）觸發，`npm ci` → `npm run build` → 以官方 Pages actions（`upload-pages-artifact` + `deploy-pages`）發佈 `dist`。
+- Vite `base` 維持相對路徑 `'./'`，專案頁子路徑與自訂網域皆適用（已確認 build 後 index.html 資源為 `./assets/...`）。
+- 以乾淨環境驗證 `npm ci` + `npm run build` 通過（等同 CI 行為）。
+
+### 首次啟用步驟（在 GitHub 上操作一次）
+
+1. Repo → Settings → Pages → Build and deployment → Source 選 **GitHub Actions**。
+2. push 到 `main`（或到 Actions 頁手動 Run workflow）。
+3. workflow 跑完後，網址會顯示在該次部署的 `github-pages` environment，或 Settings → Pages。
 
 ### 本地執行方式
 
