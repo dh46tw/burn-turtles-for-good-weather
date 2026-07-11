@@ -1,6 +1,7 @@
 <script lang="ts">
   import { ritual } from '../lib/stores.svelte';
   import { validateWish, checkWish } from '../lib/validation';
+  import { saveLastWish } from '../lib/storage';
 
   // 是否已嘗試送出（送出後才顯示必填錯誤，避免一進來就紅通通）
   let submitted = $state(false);
@@ -14,6 +15,7 @@
   function next() {
     submitted = true;
     if (Object.keys(errors).length === 0) {
+      saveLastWish(ritual.wish); // 記住本次填寫內容
       ritual.goTo('draw');
     }
   }

@@ -173,6 +173,13 @@ burn-turtles-for-good-weather/
 2. push 到 `main`（或到 Actions 頁手動 Run workflow）。
 3. workflow 跑完後，網址會顯示在該次部署的 `github-pages` environment，或 Settings → Pages。
 
+## 9. 表單記憶功能
+
+- `lib/storage.ts`：以 localStorage 記住上次填寫的完整表單（含日期），版本化 key `burn-turtles:lastWish:v1`、try/catch 保護（無痕模式不崩）、讀取逐欄位檢查。
+- `stores.svelte.ts`：初始化與 `reset()`（再燒一隻）皆帶回上次內容。
+- `StepForm.svelte`：送出驗證通過時 `saveLastWish()`。
+- 驗證：`svelte-check` 零錯誤、build 成功；存取邏輯測過（空值 / 往返 / 壞 JSON / 缺欄位）。
+
 ### 本地執行方式
 
 ```bash
