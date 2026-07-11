@@ -5,6 +5,7 @@ export interface WishErrors {
   eventName?: string;
   startDate?: string;
   endDate?: string;
+  place?: string;
   wish?: string;
 }
 
@@ -41,6 +42,9 @@ export function validateWish(data: WishData): WishErrors {
   // 結束日期可留空（單日）；若有填則不能早於開始日期
   if (data.endDate && data.startDate && data.endDate < data.startDate) {
     errors.endDate = '結束日期不能早於開始日期';
+  }
+  if (!data.place.trim()) {
+    errors.place = '請填寫地點';
   }
 
   const wishError = checkWish(data.wish);

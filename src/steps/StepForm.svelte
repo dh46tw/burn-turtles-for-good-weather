@@ -69,7 +69,15 @@
 
     <label class="field">
       <span class="label">地點</span>
-      <input type="text" placeholder="例：墾丁、台北小巨蛋" bind:value={ritual.wish.place} />
+      <input
+        type="text"
+        placeholder="例：墾丁、台北小巨蛋"
+        bind:value={ritual.wish.place}
+        class:err={submitted && errors.place}
+      />
+      {#if submitted && errors.place}
+        <span class="msg">{errors.place}</span>
+      {/if}
     </label>
 
     <label class="field">
@@ -78,9 +86,12 @@
         type="text"
         placeholder="例：陽光普照、萬里無雲、大晴天"
         bind:value={ritual.wish.wish}
-        class:err={wishError && ritual.wish.wish.length > 0}
+        class:err={(submitted && !ritual.wish.wish.trim()) ||
+          (!!wishError && ritual.wish.wish.length > 0)}
       />
-      {#if wishError && ritual.wish.wish.length > 0}
+      {#if submitted && !ritual.wish.wish.trim()}
+        <span class="msg">請寫下你的祈願</span>
+      {:else if wishError && ritual.wish.wish.length > 0}
         <span class="msg warn">⚠ {wishError}</span>
       {/if}
     </label>
