@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ritual } from '../lib/stores.svelte';
   import { validateWish, checkWish } from '../lib/validation';
-  import { saveLastWish } from '../lib/storage';
+  import { saveLastWish, emptyWish } from '../lib/storage';
 
   // 是否已嘗試送出（送出後才顯示必填錯誤，避免一進來就紅通通）
   let submitted = $state(false);
@@ -18,6 +18,12 @@
       saveLastWish(ritual.wish); // 記住本次填寫內容
       ritual.goTo('draw');
     }
+  }
+
+  // 清空所有欄位並重置提示狀態
+  function clearForm() {
+    ritual.wish = emptyWish();
+    submitted = false;
   }
 </script>
 
@@ -102,7 +108,10 @@
     <span>全程保持雙手乾燥（水象徵雨氣）· 祈願只用肯定句 · 紙張需完全燒盡</span>
   </div>
 
-  <button class="btn" onclick={next}>開始祈願</button>
+  <div class="actions">
+    <button class="btn btn--ghost" onclick={clearForm}>清空</button>
+    <button class="btn" onclick={next}>開始祈願</button>
+  </div>
 </section>
 
 <style>
@@ -191,8 +200,10 @@
   .taboo-title {
     font-weight: 700;
   }
-  .btn {
-    align-self: center;
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
     margin-top: 0.5rem;
   }
 </style>
