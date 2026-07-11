@@ -162,6 +162,11 @@
   .row .field {
     flex: 1;
   }
+  /* 英文語系下 End date 的提示文字會換兩行、Start date 只有一行，
+     兩欄標題高度不一致。讓 input 靠底對齊，標題長短就不會影響輸入框對齊。 */
+  .row .field input {
+    margin-top: auto;
+  }
   .field {
     display: flex;
     flex-direction: column;
