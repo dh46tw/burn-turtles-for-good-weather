@@ -73,6 +73,16 @@ export interface Messages {
     builtWith: string;
     langLabel: string; // 切換器的無障礙標籤
   };
+  install: {
+    button: string; // footer 常駐入口
+    iosTitle: string; // iOS 教學標題
+    iosStep1: string;
+    iosStep2: string;
+    doneTitle: string; // done 步驟一次性提示
+    doneBody: string;
+    doneCta: string;
+    dismiss: string;
+  };
 }
 
 const zhTW: Messages = {
@@ -143,6 +153,16 @@ const zhTW: Messages = {
   footer: {
     builtWith: 'Built with Claude',
     langLabel: '語言',
+  },
+  install: {
+    button: '📲 安裝到手機',
+    iosTitle: '加到主畫面',
+    iosStep1: '點畫面下方的「分享」',
+    iosStep2: '往下選「加入主畫面」',
+    doneTitle: '把它帶在身邊',
+    doneBody: '將燒烏龜加到主畫面，下次祈晴一點就開、離線也能燒。',
+    doneCta: '加到主畫面',
+    dismiss: '知道了',
   },
 };
 
@@ -217,6 +237,16 @@ const en: Messages = {
   footer: {
     builtWith: 'Built with Claude',
     langLabel: 'Language',
+  },
+  install: {
+    button: '📲 Install app',
+    iosTitle: 'Add to Home Screen',
+    iosStep1: 'Tap the Share button below',
+    iosStep2: 'Scroll down and pick "Add to Home Screen"',
+    doneTitle: 'Keep it close',
+    doneBody: 'Add Burn Turtles to your home screen — next rite is one tap away, even offline.',
+    doneCta: 'Add to home screen',
+    dismiss: 'Got it',
   },
 };
 
